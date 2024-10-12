@@ -344,7 +344,9 @@ public class MatrixV0<T> implements Matrix<T> {
    * @return a copy of the matrix.
    */
   public Matrix clone() {
-    return this; // STUB
+    MatrixV0<T> cloned = new MatrixV0<T>(this.w, this.h, this.defaultVal);
+    cloned.values = this.values;
+    return cloned;
   } // clone()
 
   /**
