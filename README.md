@@ -4,15 +4,14 @@ A project for CSC-207.
 
 Authors:
 
-* Your Name Here
+* Alexander Pollock
 * Samuel A. Rebelsky (starter code)
 
 ---
 
 Overview:
 
-PLEASE PROVIDE AN OVERVIEW OF THE PROJECT FOR THOSE WHO MIGHT NOT
-OTHERWISE UNDERSTAND IT.
+This project seeks to create 2-D arrays. These allow values to be stored at both a row and a column.
 
 ---
 
