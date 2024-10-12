@@ -197,7 +197,17 @@ public class MatrixV0<T> implements Matrix<T> {
    *   If the column is negative or greater than the width.
    */
   public void insertCol(int col) {
-    // STUB
+    if (col<0 || col>this.width){
+      throw new IndexOutOfBoundsException();
+    } // if
+    try {
+      for (int i = 0; i<this.height; i++){
+        KVPair<Integer,Integer> toAdd = new KVPair<Integer,Integer>(i,col);
+        this.values.set(toAdd, defaultVal);
+      } // for
+    } catch (Exception e) {
+      System.err.println("Failed to add row: " + col);
+    } // try/catch
   } // insertCol(int)
 
   /**
@@ -214,7 +224,20 @@ public class MatrixV0<T> implements Matrix<T> {
    *   If the size of vals is not the same as the height of the matrix.
    */
   public void insertCol(int col, T[] vals) throws ArraySizeException {
-    // STUB
+    if (col<0 || col>this.width){
+      throw new IndexOutOfBoundsException();
+    } // if
+    if (vals.length>this.height){
+      throw new ArraySizeException();
+    } // if
+    try {
+      for (int i = 0; i<this.height; i++){
+        KVPair<Integer,Integer> toAdd = new KVPair<Integer,Integer>(i,col);
+        this.values.set(toAdd, vals[i]);
+      } // for
+    } catch (Exception e) {
+      System.err.println("Failed to add row: " + col);
+    } // try/catch
   } // insertCol(int, T[])
 
   /**
