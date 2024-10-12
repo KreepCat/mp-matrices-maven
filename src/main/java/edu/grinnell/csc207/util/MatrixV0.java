@@ -133,6 +133,15 @@ public class MatrixV0<T> implements Matrix<T> {
   } // width()
 
   /**
+   * Determine the number of columns in the matrix.
+   *
+   * @return the number of columns.
+   */
+  public T getDefaultVal() {
+    return this.defaultVal;
+  } // width()
+
+  /**
    * Insert a row filled with the default value.
    *
    * @param row The number of the row to insert.
@@ -358,7 +367,20 @@ public class MatrixV0<T> implements Matrix<T> {
    *         false otherwise.
    */
   public boolean equals(Object other) {
-    return this == other; // STUB
+    return ((other instanceof MatrixV0) && (this.equals((MatrixV0<T>) other)));
+  } // equals(Object)
+
+  /**
+   * Determine if this object is equal to another object.
+   *
+   * @param other The object to compare.
+   *
+   * @return true if the other object is a matrix with the same width, height, and equal elements;
+   *         false otherwise.
+   */
+  public boolean equals(MatrixV0<T> other) {
+    return ((other.height() == this.h) && (other.width() == this.w) && (other.values == this.values)
+        && (other.getDefaultVal() == this.defaultVal));
   } // equals(Object)
 
   /**
