@@ -18,7 +18,6 @@ public class MatrixV0<T> implements Matrix<T> {
   private int width; // The width of the matrix
   private T defaultVal; // The default value
   private AssociativeArray<KVPair<Integer,Integer>,T> values;
-  private int valsInputed; // The number of values that have been inputed
 
 
   // +--------------+------------------------------------------------
@@ -45,7 +44,6 @@ public class MatrixV0<T> implements Matrix<T> {
     this.height = height;
     this.defaultVal = def;
     this.values = new AssociativeArray<KVPair<Integer,Integer>,T>();
-    this.valsInputed = 0;
   } // MatrixV0(int, int, T)
 
   /**
@@ -84,13 +82,13 @@ public class MatrixV0<T> implements Matrix<T> {
   public T get(int row, int col) {
     if (row>this.width || col>this.height) {
       throw new IndexOutOfBoundsException();
-    }
+    } // if
     try {
       KVPair<Integer,Integer> toFind = new KVPair<Integer,Integer>(row,col);
       return values.get(toFind);
     } catch (Exception e) {
       return defaultVal;
-    }
+    } // try/catch
   } // get(int, int)
 
   /**
@@ -109,14 +107,13 @@ public class MatrixV0<T> implements Matrix<T> {
   public void set(int row, int col, T val) {
     if (row>this.width || col>this.height) {
       throw new IndexOutOfBoundsException();
-    }
+    } // if
     KVPair<Integer,Integer> toAdd = new KVPair<Integer,Integer>(row,col);
     try {
       this.values.set(toAdd, val);
     } catch (Exception e) {
       System.err.println("Failed to add value at row: " + row + " col: " + col);
-    }
-    
+    } // try/catch
   } // set(int, int, T)
 
   /**
@@ -147,7 +144,17 @@ public class MatrixV0<T> implements Matrix<T> {
    *   If the row is negative or greater than the height.
    */
   public void insertRow(int row) {
-    // STUB
+    if (row<0 || row>this.height){
+      throw new IndexOutOfBoundsException();
+    } // if
+    try {
+      for (int i = 0; i<this.width; i++){
+        KVPair<Integer,Integer> toAdd = new KVPair<Integer,Integer>(row,i);
+        this.values.set(toAdd, defaultVal);
+      } // for
+    } catch (Exception e) {
+      System.err.println("Failed to add row: " + row);
+    } // try/catch
   } // insertRow(int)
 
   /**
@@ -164,7 +171,20 @@ public class MatrixV0<T> implements Matrix<T> {
    *   If the size of vals is not the same as the width of the matrix.
    */
   public void insertRow(int row, T[] vals) throws ArraySizeException {
-    // STUB
+    if (row<0 || row>this.height){
+      throw new IndexOutOfBoundsException();
+    } // if
+    if (vals.length>this.width){
+      throw new ArraySizeException();
+    } // if
+    try {
+      for (int i = 0; i<this.width; i++){
+        KVPair<Integer,Integer> toAdd = new KVPair<Integer,Integer>(row,i);
+        this.values.set(toAdd, vals[i]);
+      } // for
+    } catch (Exception e) {
+      System.err.println("Failed to add row: " + row);
+    } // try/catch
   } // insertRow(int, T[])
 
   /**
