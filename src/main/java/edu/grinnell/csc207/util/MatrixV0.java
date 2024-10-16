@@ -202,9 +202,9 @@ public class MatrixV0<T> implements Matrix<T> {
     } // for
     values = valsToAdd;
     this.h++;
-    for (int i = 0; i< vals.length; i++){
+    for (int i = 0; i < vals.length; i++) {
       try {
-        values.set(row*this.h + i, vals[i]);
+        values.set(row * this.h + i, vals[i]);
       } catch (Exception e) {
         System.err.println("Failed to add values");
       } // try/catch
@@ -272,9 +272,9 @@ public class MatrixV0<T> implements Matrix<T> {
     } // for
     values = valsToAdd;
     this.w++;
-    for (int i = 0; i< vals.length; i++){
+    for (int i = 0; i < vals.length; i++) {
       try {
-        values.set(i*this.w + col, vals[i]);
+        values.set(i * this.w + col, vals[i]);
       } catch (Exception e) {
         System.err.println("Failed to add values");
       } // try/catch
@@ -293,14 +293,14 @@ public class MatrixV0<T> implements Matrix<T> {
     if (row < 0 || row >= this.h) {
       throw new IndexOutOfBoundsException();
     } // if
-    AssociativeArray<Integer,T> newVals = new AssociativeArray<Integer,T>();
+    AssociativeArray<Integer, T> newVals = new AssociativeArray<Integer, T>();
     for (int r = 0; r < this.h; r++) {
       for (int c = 0; c < this.w; c++) {
         try {
-          if (r<row){
+          if (r < row) {
             newVals.set(r * (this.w) + c, this.get(r, c));
-          } else if (r>row){
-            newVals.set(((r-1) * this.w) + c , this.get(r, c));
+          } else if (r > row) {
+            newVals.set(((r - 1) * this.w) + c, this.get(r, c));
           } // if/elseif
         } catch (Exception e) {
           System.err.println("Failed to remove col");
@@ -323,13 +323,13 @@ public class MatrixV0<T> implements Matrix<T> {
     if (col < 0 || col >= this.w) {
       throw new IndexOutOfBoundsException();
     } // if
-    AssociativeArray<Integer,T> newVals = new AssociativeArray<Integer,T>();
+    AssociativeArray<Integer, T> newVals = new AssociativeArray<Integer, T>();
     for (int r = 0; r < this.h; r++) {
       for (int c = 0; c < this.w; c++) {
         try {
-          if (c<col){
+          if (c < col) {
             newVals.set(r * (this.w - 1) + c, this.get(r, c));
-          } else if (c>col){
+          } else if (c > col) {
             newVals.set(r * (this.w - 1) + c - 1, this.get(r, c));
           } // if/elseif
         } catch (Exception e) {
