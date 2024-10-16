@@ -404,6 +404,7 @@ public class MatrixV0<T> implements Matrix<T> {
    *
    * @return a copy of the matrix.
    */
+  @SuppressWarnings("rawtypes")
   public Matrix clone() {
     MatrixV0<T> cloned = new MatrixV0<T>(this.w, this.h, this.defaultVal);
     cloned.values = this.values;
@@ -418,6 +419,7 @@ public class MatrixV0<T> implements Matrix<T> {
    * @return true if the other object is a matrix with the same width, height, and equal elements;
    *         false otherwise.
    */
+  @SuppressWarnings("unchecked")
   public boolean equals(Object other) {
     return ((other instanceof MatrixV0) && (this.equals((MatrixV0<T>) other)));
   } // equals(Object)
