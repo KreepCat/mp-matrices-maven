@@ -31,7 +31,7 @@ public class MatrixV0<T> implements Matrix<T> {
   /**
    * The inputed locations and associated values. (row,col) -> val
    */
-  private AssociativeArray<KVPair<Integer, Integer>, T> values;
+  private AssociativeArray<Integer, T> values;
 
 
   // +--------------+------------------------------------------------
@@ -47,12 +47,11 @@ public class MatrixV0<T> implements Matrix<T> {
    *
    * @throws NegativeArraySizeException If either the width or height are negative.
    */
-  @SuppressWarnings({"unchecked"})
   public MatrixV0(int width, int height, T def) {
     this.w = width;
     this.h = height;
     this.defaultVal = def;
-    this.values = new AssociativeArray<KVPair<Integer, Integer>, T>();
+    this.values = new AssociativeArray<Integer, T>();
   } // MatrixV0(int, int, T)
 
   /**
@@ -82,11 +81,11 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws IndexOutOfBoundsException If either the row or column is out of reasonable bounds.
    */
   public T get(int row, int col) {
-    if (row > this.w || col > this.h) {
+    if (col > this.w || row > this.h || row < 0 || col < 0) {
       throw new IndexOutOfBoundsException();
     } // if
     try {
-      KVPair<Integer, Integer> toFind = new KVPair<Integer, Integer>(row, col);
+      int toFind = (row * this.w) + col;
       return values.get(toFind);
     } catch (Exception e) {
       return defaultVal;
@@ -103,10 +102,10 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws IndexOutOfBoundsException If either the row or column is out of reasonable bounds.
    */
   public void set(int row, int col, T val) {
-    if (row > this.w || col > this.h) {
+    if (col > this.w || row > this.h || row < 0 || col < 0) {
       throw new IndexOutOfBoundsException();
     } // if
-    KVPair<Integer, Integer> toAdd = new KVPair<Integer, Integer>(row, col);
+    int toAdd = (row * this.w) + col;
     try {
       this.values.set(toAdd, val);
     } catch (Exception e) {
@@ -122,6 +121,7 @@ public class MatrixV0<T> implements Matrix<T> {
   public int height() {
     return this.h;
   } // height()
+
 
   /**
    * Determine the number of columns in the matrix.
@@ -152,14 +152,22 @@ public class MatrixV0<T> implements Matrix<T> {
     if (row < 0 || row > this.h) {
       throw new IndexOutOfBoundsException();
     } // if
-    try {
-      for (int i = 0; i < this.w; i++) {
-        KVPair<Integer, Integer> toAdd = new KVPair<Integer, Integer>(row, i);
-        this.values.set(toAdd, defaultVal);
+    AssociativeArray<Integer, T> valsToAdd = new AssociativeArray<Integer, T>();
+    for (int c = 0; c < this.w; c++) {
+      for (int r = 0; r < this.h; r++) {
+        try {
+          if (r >= row) {
+            valsToAdd.set((r * (this.w + 1)) + c + 1, this.get(r, c));
+          } else {
+            valsToAdd.set((r * (this.w + 1)) + c, this.get(r, c));
+          } // if/else
+        } catch (Exception e) {
+          System.err.println("Failed to add row");
+        } // try/catch
       } // for
-    } catch (Exception e) {
-      System.err.println("Failed to add row: " + row);
-    } // try/catch
+    } // for
+    values = valsToAdd;
+    this.h++;
   } // insertRow(int)
 
   /**
@@ -178,14 +186,29 @@ public class MatrixV0<T> implements Matrix<T> {
     if (vals.length > this.w) {
       throw new ArraySizeException();
     } // if
-    try {
-      for (int i = 0; i < this.w; i++) {
-        KVPair<Integer, Integer> toAdd = new KVPair<Integer, Integer>(row, i);
-        this.values.set(toAdd, vals[i]);
+    AssociativeArray<Integer, T> valsToAdd = new AssociativeArray<Integer, T>();
+    for (int c = 0; c < this.w; c++) {
+      for (int r = 0; r < this.h; r++) {
+        try {
+          if (r >= row) {
+            valsToAdd.set(((r + 1) * this.w) + c, this.get(r, c));
+          } else {
+            valsToAdd.set((r * this.w) + c, this.get(r, c));
+          } // if/else
+        } catch (Exception e) {
+          System.err.println("Failed to add col");
+        } // try/catch
       } // for
-    } catch (Exception e) {
-      System.err.println("Failed to add row: " + row);
-    } // try/catch
+    } // for
+    values = valsToAdd;
+    this.h++;
+    for (int i = 0; i< vals.length; i++){
+      try {
+        values.set(row*this.h + i, vals[i]);
+      } catch (Exception e) {
+        System.err.println("Failed to add values");
+      } // try/catch
+    } // for
   } // insertRow(int, T[])
 
   /**
@@ -199,14 +222,22 @@ public class MatrixV0<T> implements Matrix<T> {
     if (col < 0 || col > this.w) {
       throw new IndexOutOfBoundsException();
     } // if
-    try {
-      for (int i = 0; i < this.h; i++) {
-        KVPair<Integer, Integer> toAdd = new KVPair<Integer, Integer>(i, col);
-        this.values.set(toAdd, defaultVal);
+    AssociativeArray<Integer, T> valsToAdd = new AssociativeArray<Integer, T>();
+    for (int c = 0; c < this.w; c++) {
+      for (int r = 0; r < this.h; r++) {
+        try {
+          if (c >= col) {
+            valsToAdd.set((r * (this.w + 1)) + c + 1, this.get(r, c));
+          } else {
+            valsToAdd.set((r * (this.w + 1)) + c, this.get(r, c));
+          } // if/else
+        } catch (Exception e) {
+          System.err.println("Failed to add col");
+        } // try/catch
       } // for
-    } catch (Exception e) {
-      System.err.println("Failed to add row: " + col);
-    } // try/catch
+    } // for
+    values = valsToAdd;
+    this.w++;
   } // insertCol(int)
 
   /**
@@ -218,21 +249,36 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws IndexOutOfBoundsException If the column is negative or greater than the width.
    * @throws ArraySizeException If the size of vals is not the same as the height of the matrix.
    */
-  public void insertCol(int col, T[] vals) throws ArraySizeException {
+  public void insertCol(int col, T[] vals) throws ArraySizeException, IndexOutOfBoundsException {
     if (col < 0 || col > this.w) {
-      throw new IndexOutOfBoundsException();
-    } // if
-    if (vals.length > this.h) {
       throw new ArraySizeException();
     } // if
-    try {
-      for (int i = 0; i < this.h; i++) {
-        KVPair<Integer, Integer> toAdd = new KVPair<Integer, Integer>(i, col);
-        this.values.set(toAdd, vals[i]);
+    if (vals.length != this.h) {
+      throw new ArraySizeException();
+    } // if
+    AssociativeArray<Integer, T> valsToAdd = new AssociativeArray<Integer, T>();
+    for (int c = 0; c < this.w; c++) {
+      for (int r = 0; r < this.h; r++) {
+        try {
+          if (c >= col) {
+            valsToAdd.set((r * (this.w + 1)) + c + 1, this.get(r, c));
+          } else {
+            valsToAdd.set((r * (this.w + 1)) + c, this.get(r, c));
+          } // if/else
+        } catch (Exception e) {
+          System.err.println("Failed to add col");
+        } // try/catch
       } // for
-    } catch (Exception e) {
-      System.err.println("Failed to add row: " + col);
-    } // try/catch
+    } // for
+    values = valsToAdd;
+    this.w++;
+    for (int i = 0; i< vals.length; i++){
+      try {
+        values.set(i*this.w + col, vals[i]);
+      } catch (Exception e) {
+        System.err.println("Failed to add values");
+      } // try/catch
+    } // for
   } // insertCol(int, T[])
 
   /**
@@ -247,18 +293,21 @@ public class MatrixV0<T> implements Matrix<T> {
     if (row < 0 || row >= this.h) {
       throw new IndexOutOfBoundsException();
     } // if
-    for (int i = row + 1; i < this.h; i++) {
-      for (int n = 0; n < this.w; n++) {
-        if (values.hasKey(new KVPair<>(i, n))) {
-          try {
-            values.set(new KVPair<>(i - 1, n), values.get(new KVPair<>(i, n)));
-          } catch (Exception e) {
-            System.err.println("Failed to remove row: " + row);
-          } // try/catch
-        } // if
+    AssociativeArray<Integer,T> newVals = new AssociativeArray<Integer,T>();
+    for (int r = 0; r < this.h; r++) {
+      for (int c = 0; c < this.w; c++) {
+        try {
+          if (r<row){
+            newVals.set(r * (this.w) + c, this.get(r, c));
+          } else if (r>row){
+            newVals.set(((r-1) * this.w) + c , this.get(r, c));
+          } // if/elseif
+        } catch (Exception e) {
+          System.err.println("Failed to remove col");
+        } // try/catch
       } // for
     } // for
-    insertRow(row);
+    values = newVals;
     this.h--;
   } // deleteRow(int)
 
@@ -274,18 +323,21 @@ public class MatrixV0<T> implements Matrix<T> {
     if (col < 0 || col >= this.w) {
       throw new IndexOutOfBoundsException();
     } // if
-    for (int i = col + 1; i < this.w; i++) {
-      for (int n = 0; n < this.h; n++) {
-        if (values.hasKey(new KVPair<>(n, i))) {
-          try {
-            values.set(new KVPair<>(n, i - 1), values.get(new KVPair<>(n, i - 1)));
-          } catch (Exception e) {
-            System.err.println("Failed to remove col: " + col);
-          } // try/catch
-        } // if
+    AssociativeArray<Integer,T> newVals = new AssociativeArray<Integer,T>();
+    for (int r = 0; r < this.h; r++) {
+      for (int c = 0; c < this.w; c++) {
+        try {
+          if (c<col){
+            newVals.set(r * (this.w - 1) + c, this.get(r, c));
+          } else if (c>col){
+            newVals.set(r * (this.w - 1) + c - 1, this.get(r, c));
+          } // if/elseif
+        } catch (Exception e) {
+          System.err.println("Failed to remove col");
+        } // try/catch
       } // for
     } // for
-    insertCol(col);
+    values = newVals;
     this.w--;
   } // deleteCol(int)
 
@@ -307,7 +359,7 @@ public class MatrixV0<T> implements Matrix<T> {
     for (int r = startRow; r < endRow; r++) {
       for (int c = startCol; c < endCol; c++) {
         try {
-          values.set(new KVPair<>(r, c), val);
+          values.set((r * this.w) + c, val);
         } catch (NullKeyException e) {
           System.err.println("Failed to add element at row: " + r + " col: " + c);
         } // try/catch
@@ -337,7 +389,7 @@ public class MatrixV0<T> implements Matrix<T> {
     int c = startCol;
     while (r < endRow && c < endCol) {
       try {
-        values.set(new KVPair<>(r, c), val);
+        values.set((r * this.w) + c, val);
       } catch (NullKeyException e) {
         System.err.println("Failed to add value");
       } // try/catch
