@@ -81,7 +81,7 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws IndexOutOfBoundsException If either the row or column is out of reasonable bounds.
    */
   public T get(int row, int col) {
-    if (col > this.w || row > this.h || row < 0 || col < 0) {
+    if (col >= this.w || row >= this.h || row < 0 || col < 0) {
       throw new IndexOutOfBoundsException();
     } // if
     try {
@@ -102,7 +102,7 @@ public class MatrixV0<T> implements Matrix<T> {
    * @throws IndexOutOfBoundsException If either the row or column is out of reasonable bounds.
    */
   public void set(int row, int col, T val) {
-    if (col > this.w || row > this.h || row < 0 || col < 0) {
+    if (col >= this.w || row >= this.h || row < 0 || col < 0) {
       throw new IndexOutOfBoundsException();
     } // if
     int toAdd = (row * this.w) + col;
@@ -157,9 +157,9 @@ public class MatrixV0<T> implements Matrix<T> {
       for (int r = 0; r < this.h; r++) {
         try {
           if (r >= row) {
-            valsToAdd.set((r * (this.w + 1)) + c + 1, this.get(r, c));
+            valsToAdd.set(((r + 1) * this.w) + c, this.get(r, c));
           } else {
-            valsToAdd.set((r * (this.w + 1)) + c, this.get(r, c));
+            valsToAdd.set((r * this.w) + c, this.get(r, c));
           } // if/else
         } catch (Exception e) {
           System.err.println("Failed to add row");
@@ -183,7 +183,7 @@ public class MatrixV0<T> implements Matrix<T> {
     if (row < 0 || row > this.h) {
       throw new IndexOutOfBoundsException();
     } // if
-    if (vals.length > this.w) {
+    if (vals.length != this.w) {
       throw new ArraySizeException();
     } // if
     AssociativeArray<Integer, T> valsToAdd = new AssociativeArray<Integer, T>();
@@ -204,7 +204,7 @@ public class MatrixV0<T> implements Matrix<T> {
     this.h++;
     for (int i = 0; i < vals.length; i++) {
       try {
-        values.set(row * this.h + i, vals[i]);
+        values.set(row * this.w + i, vals[i]);
       } catch (Exception e) {
         System.err.println("Failed to add values");
       } // try/catch
@@ -251,7 +251,7 @@ public class MatrixV0<T> implements Matrix<T> {
    */
   public void insertCol(int col, T[] vals) throws ArraySizeException, IndexOutOfBoundsException {
     if (col < 0 || col > this.w) {
-      throw new ArraySizeException();
+      throw new IndexOutOfBoundsException();
     } // if
     if (vals.length != this.h) {
       throw new ArraySizeException();
@@ -407,7 +407,8 @@ public class MatrixV0<T> implements Matrix<T> {
   @SuppressWarnings("rawtypes")
   public Matrix clone() {
     MatrixV0<T> cloned = new MatrixV0<T>(this.w, this.h, this.defaultVal);
-    cloned.values = this.values;
+    AssociativeArray<Integer, T> clonedValues = this.values;
+    cloned.values = clonedValues;
     return cloned;
   } // clone()
 
@@ -419,22 +420,21 @@ public class MatrixV0<T> implements Matrix<T> {
    * @return true if the other object is a matrix with the same width, height, and equal elements;
    *         false otherwise.
    */
-  @SuppressWarnings("unchecked")
   public boolean equals(Object other) {
-    return ((other instanceof MatrixV0) && (this.equals((MatrixV0<T>) other)));
-  } // equals(Object)
-
-  /**
-   * Determine if this object is equal to another object.
-   *
-   * @param other The object to compare.
-   *
-   * @return true if the other object is a matrix with the same width, height, and equal elements;
-   *         false otherwise.
-   */
-  public boolean equals(MatrixV0<T> other) {
-    return ((other.height() == this.h) && (other.width() == this.w) && (other.values == this.values)
-        && (other.getDefaultVal() == this.defaultVal));
+    if (other instanceof Matrix) {
+      Matrix otherMatrix = (Matrix) other;
+      if (otherMatrix.height() == this.h && otherMatrix.width() == this.w) {
+        for (int r = 0; r < this.h; r++) {
+          for (int c = 0; c < this.w; c++) {
+            if (!(this.get(r, c).equals(otherMatrix.get(r, c)))) {
+              return false;
+            } // if
+          } // for
+        } // for
+        return true;
+      } // if
+    } // if
+    return false;
   } // equals(Object)
 
   /**
